@@ -1,0 +1,472 @@
+/* =================================================================
+   Fonts
+   TeX Gyre Heros (self-hosted, GUST Font License — free, redistributable,
+   near-identical metric/shape clone of Helvetica). Falls back to real
+   Helvetica on systems that have it, then Inter (loaded via Google Fonts),
+   then Arial.
+   ================================================================= */
+@font-face {
+  font-family: 'TeX Gyre Heros';
+  src: url('../assets/fonts/texgyreheros-regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'TeX Gyre Heros';
+  src: url('../assets/fonts/texgyreheros-bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* =================================================================
+   Variables
+   ================================================================= */
+:root {
+  --color-bg: #fcfcfc;
+  --color-text: #101010;
+  --color-muted: #6f6f6f;
+  --color-divider: #9b9b9b;
+  --color-link: #1400ea;
+
+  --font-sans: 'TeX Gyre Heros', 'Helvetica Neue', Helvetica, Inter, Arial, sans-serif;
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-bold: 700;
+
+  --page-padding: 14px;
+  --header-height: 58px;
+  --content-max-width: 1080px;
+  --nav-gap: 16px;
+
+  --gap-xs: 8px;
+  --gap-sm: 12px;
+  --gap-md: 24px;
+  --gap-lg: 48px;
+  --gap-xl: 72px;
+}
+
+@media (min-width: 700px) {
+  :root {
+    --page-padding: 40px;
+    --header-height: 84px;
+    --nav-gap: 32px;
+    --gap-lg: 64px;
+    --gap-xl: 120px;
+  }
+}
+
+/* =================================================================
+   Reset
+   ================================================================= */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; }
+img { display: block; max-width: 100%; }
+h1, h2, h3, p, ul { margin: 0; padding: 0; }
+ul { list-style: none; }
+a { color: inherit; text-decoration: none; }
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  text-align: inherit;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-weight: var(--weight-regular);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@media (min-width: 700px) {
+  body { font-size: 16px; }
+}
+
+/* Shared page-width container behaviour (header + each section) */
+.site-header,
+.section {
+  max-width: var(--content-max-width);
+  margin-inline: auto;
+  padding-inline: var(--page-padding);
+}
+
+/* Screen-reader-only text: keeps semantics correct (e.g. a heading per
+   project) without changing anything visually */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* =================================================================
+   Header
+   ================================================================= */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gap-sm);
+  height: var(--header-height);
+  background: var(--color-bg);
+}
+
+.logo-mark {
+  position: relative;
+  display: inline-flex;
+  flex: 0 0 auto;
+}
+
+.logo-mark__word {
+  height: 22px;
+  width: auto;
+}
+
+.logo-mark__overlay {
+  position: absolute;
+  top: -18%;
+  right: -4%;
+  height: 128%;
+  width: auto;
+  pointer-events: none;
+}
+
+@media (min-width: 700px) {
+  .logo-mark__word { height: 28px; }
+}
+
+.site-nav ul {
+  display: flex;
+  gap: var(--nav-gap);
+}
+
+.site-nav a {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.site-nav a:hover { color: var(--color-muted); }
+
+@media (min-width: 700px) {
+  .site-nav a { font-size: 13px; }
+}
+
+/* =================================================================
+   Section headings ("1  VISUAL ARTWORK ————")
+   Single flex pattern shared by all three sections so the index,
+   label and rule line always sit level and the rule always fills
+   the remaining width consistently.
+   ================================================================= */
+.section-heading {
+  display: flex;
+  align-items: baseline;
+  gap: var(--gap-xs);
+  padding-block: var(--gap-md);
+}
+
+.section-heading h2 {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  flex: 0 0 auto;
+  font-size: 12px;
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.section-heading__index {
+  font-weight: var(--weight-regular);
+}
+
+.section-heading__rule {
+  flex: 1 1 auto;
+  border-top: 1px solid var(--color-divider);
+}
+
+/* =================================================================
+   Projects / artwork grids
+   ================================================================= */
+.project {
+  margin-bottom: var(--gap-xl);
+}
+
+.project__grid {
+  display: grid;
+}
+
+.project__cell {
+  display: block;
+  width: 100%;
+  cursor: zoom-in;
+}
+
+.project__cell img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Row 1 — PHASE: logo + tag stacked left, catalog image spans right */
+.project__grid--phase {
+  grid-template-columns: 4fr 5fr;
+}
+
+.project__cell--logo,
+.project__cell--tag {
+  grid-column: 1;
+  aspect-ratio: 1 / 1;
+}
+.project__cell--logo { grid-row: 1; }
+.project__cell--tag { grid-row: 2; }
+
+.project__cell--catalog {
+  grid-column: 2;
+  grid-row: 1 / 3;
+}
+
+/* Row 2 / Row 3 — two images side by side */
+.project__grid--pair {
+  grid-template-columns: 1fr 1fr;
+}
+
+.project__grid--pair .project__cell {
+  aspect-ratio: 1 / 1;
+}
+
+/* Row 3 modifier — natural (uncropped) aspect ratio, with a gap,
+   matching the source design rather than forcing a flush crop */
+.project__grid--gap {
+  gap: var(--gap-sm);
+}
+
+.project__grid--gap .project__cell--auto {
+  aspect-ratio: auto;
+}
+.project__grid--gap .project__cell--auto img {
+  height: auto;
+}
+
+@media (min-width: 700px) {
+  .project__grid--gap { gap: var(--gap-md); }
+}
+
+/* Small product thumbnails (shirt / hoodie) */
+.product-row {
+  display: flex;
+  justify-content: center;
+  gap: var(--gap-xl);
+  padding-block: var(--gap-lg);
+}
+
+.product {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--gap-xs);
+  cursor: zoom-in;
+}
+
+.product--disabled {
+  cursor: default;
+}
+
+.product__thumb {
+  width: 64px;
+}
+
+.product__thumb img {
+  width: 100%;
+  height: auto;
+}
+
+.product__thumb--muted img {
+  filter: grayscale(1);
+  opacity: 0.55;
+}
+
+.product__label {
+  font-size: 11px;
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+@media (min-width: 700px) {
+  .product__thumb { width: 80px; }
+  .product__label { font-size: 12px; }
+}
+
+.project__caption {
+  max-width: 640px;
+  margin-inline: auto;
+  padding-block: var(--gap-md);
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+@media (min-width: 700px) {
+  .project__caption { font-size: 15px; }
+}
+
+/* =================================================================
+   About
+   ================================================================= */
+.about-text {
+  max-width: 640px;
+  padding-left: clamp(20px, 15vw, 140px);
+  padding-bottom: var(--gap-xl);
+}
+
+.about-text p + p {
+  margin-top: var(--gap-md);
+}
+
+.about-text strong {
+  font-weight: var(--weight-bold);
+}
+
+/* =================================================================
+   Contact
+   ================================================================= */
+.contact-card {
+  display: flex;
+  justify-content: center;
+  padding-block: var(--gap-lg);
+}
+
+.contact-card__frame {
+  position: relative;
+  width: min(320px, 70%);
+}
+
+.contact-card__envelope {
+  width: 100%;
+  height: auto;
+}
+
+.contact-card__email {
+  position: absolute;
+  top: 21%;
+  left: 9%;
+  color: var(--color-link);
+  font-size: 13px;
+  font-weight: var(--weight-medium);
+  text-decoration: underline;
+  user-select: text;
+  white-space: nowrap;
+}
+
+@media (min-width: 700px) {
+  .contact-card__email { font-size: 16px; }
+}
+
+.social-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--gap-lg);
+  padding-block: var(--gap-md) var(--gap-lg);
+}
+
+.social-row img {
+  height: 22px;
+  width: auto;
+}
+
+.social-row a:hover {
+  opacity: 0.7;
+}
+
+.platform-row {
+  display: flex;
+  justify-content: center;
+  gap: var(--gap-xl);
+  padding-block: var(--gap-lg) var(--gap-xl);
+  border-top: 1px solid var(--color-divider);
+}
+
+.platform-row a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--gap-xs);
+}
+
+.platform-row img {
+  width: 40px;
+  height: 40px;
+}
+
+.platform-row span {
+  font-size: 13px;
+}
+
+.platform-row a:hover {
+  opacity: 0.8;
+}
+
+@media (min-width: 700px) {
+  .platform-row img { width: 48px; height: 48px; }
+}
+
+/* =================================================================
+   Lightbox (native <dialog>)
+   ================================================================= */
+.lightbox {
+  border: 0;
+  padding: 0;
+  max-width: 92vw;
+  max-height: 92vh;
+  background: transparent;
+}
+
+.lightbox::backdrop {
+  background: rgba(16, 16, 16, 0.92);
+}
+
+.lightbox__image {
+  display: block;
+  max-width: 92vw;
+  max-height: 92vh;
+  width: auto;
+  height: auto;
+}
+
+.lightbox__close {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  cursor: pointer;
+}
