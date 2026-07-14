@@ -1,0 +1,27 @@
+.contact-phone {
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.works .work-art {
+  cursor: zoom-in;
+}
+
+.works .work-art:focus-visible {
+  outline: 1px solid #fff;
+  outline-offset: 5px;
+}
+
+/* A fixed navigation remains available without competing with the work on screen. */
+.site-nav.is-hidden {
+  transform: translateY(-100%);
+}
+
+@media (hover: none) {
+  .site-nav.is-hidden {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+  }
+}

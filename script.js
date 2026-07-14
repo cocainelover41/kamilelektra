@@ -70,7 +70,27 @@ window.addEventListener('scroll', () => {
 }, { passive: true });
 
 const modal = document.querySelector('.image-modal');
-document.querySelector('.shirt').addEventListener('click', () => modal.showModal());
+const modalImage = modal.querySelector('img');
+const openPreview = (image) => {
+  modalImage.src = image.currentSrc || image.src;
+  modalImage.alt = image.alt;
+  if (!modal.open) modal.showModal();
+};
+document.querySelector('.shirt').addEventListener('click', () => openPreview(document.querySelector('.shirt img')));
+document.querySelectorAll('.works .work-art').forEach((art) => {
+  const image = art.querySelector('img');
+  if (!image) return;
+  art.tabIndex = 0;
+  art.setAttribute('role', 'button');
+  art.setAttribute('aria-label', `Open ${image.alt} preview`);
+  art.addEventListener('click', () => openPreview(image));
+  art.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      openPreview(image);
+    }
+  });
+});
 document.querySelector('.modal-close').addEventListener('click', () => modal.close());
 modal.addEventListener('click', (event) => { if (event.target === modal) modal.close(); });
 
