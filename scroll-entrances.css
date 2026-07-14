@@ -1,13 +1,14 @@
 /* One-time Framer-style entrances; these classes never affect document layout. */
 /* Keep only the intended elements out of view until their first scroll entrance. */
 @media (prefers-reduced-motion: no-preference) {
-  .section-heading h2:not(.enter-heading),
-  .services h3:not(.enter-heading),
-  .find-me h3:not(.enter-heading),
-  .credits h3:not(.enter-heading),
-  .works .work-copy:not(.enter-copy),
-  .availability:not(.enter-copy),
-  .credits p:not(.enter-copy) {
+  html.entrances-enabled .section-heading h2:not(.enter-heading),
+  html.entrances-enabled .services-title > span:not(.enter-heading),
+  html.entrances-enabled .services h3:not(.enter-heading),
+  html.entrances-enabled .find-me h3:not(.enter-heading),
+  html.entrances-enabled .credits h3:not(.enter-heading),
+  html.entrances-enabled .works .work-copy:not(.enter-copy),
+  html.entrances-enabled .availability:not(.enter-copy),
+  html.entrances-enabled .credits p:not(.enter-copy) {
     opacity: 0;
   }
 }

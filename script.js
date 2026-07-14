@@ -2,6 +2,8 @@ const hero = document.querySelector('.hero');
 const trail = document.querySelector('.hero-trail');
 const nav = document.querySelector('.site-nav');
 const aboutText = document.querySelector('.about-text');
+const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+if (!reducedMotion) document.documentElement.classList.add('entrances-enabled');
 const trailSources = [
   'public/assets/images/cursor-1.png',
   'public/assets/images/cursor-2.png',
@@ -202,7 +204,7 @@ window.addEventListener('resize', scheduleAboutUpdate, { passive:true });
 scheduleAboutUpdate();
 
 const headingEntrances = document.querySelectorAll(
-  '.section-heading h2, .services h3, .find-me h3, .credits h3'
+  '.section-heading h2, .services-title > span, .services h3, .find-me h3, .credits h3'
 );
 const copyEntrances = document.querySelectorAll(
   '.works .work-copy, .availability, .credits p'
@@ -212,7 +214,7 @@ const runEntrance = (target, className) => {
   target.classList.add(className);
 };
 
-if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+if (!reducedMotion) {
   const entranceTargets = [];
   headingEntrances.forEach((target) => {
     target.dataset.entrance = 'enter-heading';
@@ -223,17 +225,33 @@ if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     entranceTargets.push(target);
   });
   let entranceFrame = null;
+  let entrancesActivated = false;
   const triggerEntrances = () => {
     entranceFrame = null;
     entranceTargets.forEach((target) => {
       if (target.dataset.entered) return;
       const rect = target.getBoundingClientRect();
-      const inEntranceZone = rect.top <= window.innerHeight * .84 && rect.bottom >= 0;
-      if (inEntranceZone) runEntrance(target, target.dataset.entrance);
+      // Also resolve items that were crossed during a very fast desktop scroll.
+      if (rect.top <= window.innerHeight * .84) runEntrance(target, target.dataset.entrance);
     });
   };
-  window.addEventListener('scroll', () => {
+  const entranceObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting || entry.target.dataset.entered) return;
+      runEntrance(entry.target, entry.target.dataset.entrance);
+      entranceObserver.unobserve(entry.target);
+    });
+  }, { rootMargin:'0px 0px -16% 0px', threshold:0 });
+  const activateEntrances = () => {
+    if (!entrancesActivated) {
+      entrancesActivated = true;
+      entranceTargets.forEach((target) => entranceObserver.observe(target));
+    }
     if (entranceFrame === null) entranceFrame = requestAnimationFrame(triggerEntrances);
+  };
+  window.addEventListener('scroll', activateEntrances, { passive: true });
+  window.addEventListener('resize', () => {
+    if (entrancesActivated) activateEntrances();
   }, { passive: true });
 }
 
