@@ -15,7 +15,11 @@ let lastPoint = null;
 let pieceIndex = 0;
 let heroActive = true;
 
-requestAnimationFrame(() => requestAnimationFrame(() => document.documentElement.classList.add('page-ready')));
+requestAnimationFrame(() => requestAnimationFrame(() => {
+  document.documentElement.classList.add('page-ready');
+  // The intro delay is only for the first page entrance, never for hover navigation.
+  setTimeout(() => nav.classList.add('intro-complete'), 1850);
+}));
 
 const aboutParagraph = aboutText?.querySelector('p');
 const aboutCharacters = [];
