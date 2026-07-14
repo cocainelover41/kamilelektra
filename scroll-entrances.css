@@ -1,0 +1,66 @@
+/* One-time Framer-style entrances; these classes never affect document layout. */
+/* Keep only the intended elements out of view until their first scroll entrance. */
+@media (prefers-reduced-motion: no-preference) {
+  .section-heading h2:not(.enter-heading),
+  .services h3:not(.enter-heading),
+  .find-me h3:not(.enter-heading),
+  .credits h3:not(.enter-heading),
+  .works .work-copy:not(.enter-copy),
+  .availability:not(.enter-copy),
+  .credits p:not(.enter-copy) {
+    opacity: 0;
+  }
+}
+
+.enter-heading {
+  animation: heading-enter .76s cubic-bezier(.16, 1, .3, 1) both;
+  will-change: color, opacity, filter, transform;
+}
+
+.enter-copy {
+  animation: copy-enter .46s cubic-bezier(.16, 1, .3, 1) both;
+  will-change: color, opacity, filter, transform;
+}
+
+@keyframes heading-enter {
+  0% {
+    color: #737373;
+    opacity: 0;
+    filter: blur(4px);
+    transform: translate3d(0, 21px, 0);
+  }
+  58% {
+    color: #d5d5d5;
+    opacity: .94;
+    filter: blur(0);
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    color: #fff;
+    opacity: 1;
+    filter: blur(0);
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes copy-enter {
+  0% {
+    color: #8a8a8a;
+    opacity: 0;
+    filter: blur(2px);
+    transform: translate3d(0, 13px, 0);
+  }
+  100% {
+    color: #fff;
+    opacity: 1;
+    filter: blur(0);
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .enter-heading,
+  .enter-copy {
+    animation: none;
+  }
+}

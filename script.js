@@ -29,22 +29,33 @@ if (aboutParagraph) {
   });
 }
 
-const placeTrailPiece = (event) => {
+const placeTrailPiece = (event, touchInput = false) => {
   if (!heroActive || !lastPoint) return;
-  const distance = Math.hypot(event.clientX - lastPoint.x, event.clientY - lastPoint.y);
-  if (distance < 38) return;
+  const deltaX = event.clientX - lastPoint.x;
+  const deltaY = event.clientY - lastPoint.y;
+  const distance = Math.hypot(deltaX, deltaY);
+  // A phone's shorter gesture distance needs a tighter threshold to match
+  // the density of a desktop cursor trail.
+  if (distance < (touchInput ? 16 : 38)) return;
   lastPoint = { x: event.clientX, y: event.clientY };
+  const directionX = deltaX / distance;
+  const directionY = deltaY / distance;
+  const momentum = Math.min(42, distance * .52);
+  const jitter = () => Math.random() * 10 - 5;
   const bounds = hero.getBoundingClientRect();
   const image = document.createElement('img');
   image.className = 'trail-piece';
   image.src = trailSources[pieceIndex++ % trailSources.length];
   image.style.left = `${event.clientX - bounds.left}px`;
   image.style.top = `${event.clientY - bounds.top}px`;
-  image.style.setProperty('--r', `${(Math.random() * 24 - 12).toFixed(1)}deg`);
-  image.style.setProperty('--offset-x', `${(Math.random() * 28 - 14).toFixed(1)}px`);
-  image.style.setProperty('--offset-y', `${(Math.random() * 28 - 14).toFixed(1)}px`);
-  image.style.setProperty('--drift-x', `${(Math.random() * 34 - 17).toFixed(1)}px`);
-  image.style.setProperty('--drift-y', `${(Math.random() * 26 - 13).toFixed(1)}px`);
+  image.style.setProperty('--r', `${(Math.random() * 18 - 9).toFixed(1)}deg`);
+  image.style.setProperty('--tilt', `${(directionX * 5 + Math.random() * 6 - 3).toFixed(1)}deg`);
+  image.style.setProperty('--offset-x', `${(-directionX * momentum + jitter()).toFixed(1)}px`);
+  image.style.setProperty('--offset-y', `${(-directionY * momentum + jitter()).toFixed(1)}px`);
+  image.style.setProperty('--glide-x', `${(directionX * 5 + jitter() * .4).toFixed(1)}px`);
+  image.style.setProperty('--glide-y', `${(directionY * 5 + jitter() * .4).toFixed(1)}px`);
+  image.style.setProperty('--drift-x', `${(directionX * (momentum + 12) + jitter()).toFixed(1)}px`);
+  image.style.setProperty('--drift-y', `${(directionY * (momentum + 12) + jitter()).toFixed(1)}px`);
   image.addEventListener('animationend', (event) => { if (event.animationName === 'trail-out') image.remove(); });
   trail.append(image);
 };
@@ -79,7 +90,7 @@ hero.addEventListener('touchstart', (event) => {
 }, { passive:true });
 hero.addEventListener('touchmove', (event) => {
   const touch = [...event.touches].find(({ identifier }) => identifier === activeTouchId);
-  if (touch) placeTrailPiece(touchTrailEvent(touch));
+  if (touch) placeTrailPiece(touchTrailEvent(touch), true);
 }, { passive:true });
 hero.addEventListener('touchend', (event) => {
   if ([...event.changedTouches].some(({ identifier }) => identifier === activeTouchId)) {
@@ -92,21 +103,32 @@ hero.addEventListener('touchcancel', () => { activeTouchId = null; lastPoint = n
 const phoneSource = document.querySelector('.phone-source');
 const phoneCanvas = document.querySelector('.contact-phone canvas');
 if (phoneSource && phoneCanvas) {
-  const phoneContext = phoneCanvas.getContext('2d');
+  const phoneContext = phoneCanvas.getContext('2d', { alpha:true, desynchronized:true });
+  let phoneFrame = null;
+  let phoneVisible = true;
   const sizePhoneCanvas = () => {
     const ratio = phoneSource.videoWidth / phoneSource.videoHeight || 1.5;
     phoneCanvas.width = 960;
     phoneCanvas.height = Math.round(phoneCanvas.width / ratio);
   };
   const drawPhoneFrame = () => {
+    phoneFrame = null;
+    if (!phoneVisible) return;
     if (phoneSource.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
       phoneContext.drawImage(phoneSource, 0, 0, phoneCanvas.width, phoneCanvas.height);
     }
-    requestAnimationFrame(drawPhoneFrame);
+    phoneFrame = requestAnimationFrame(drawPhoneFrame);
+  };
+  const startPhoneDrawing = () => {
+    if (phoneVisible && phoneFrame === null) phoneFrame = requestAnimationFrame(drawPhoneFrame);
   };
   phoneSource.addEventListener('loadedmetadata', sizePhoneCanvas, { once:true });
   phoneSource.play().catch(() => {});
-  requestAnimationFrame(drawPhoneFrame);
+  new IntersectionObserver(([entry]) => {
+    phoneVisible = entry.isIntersecting;
+    if (phoneVisible) startPhoneDrawing();
+  }, { rootMargin:'160px 0px' }).observe(phoneCanvas);
+  startPhoneDrawing();
 }
 
 let pointerY = Number.POSITIVE_INFINITY;
@@ -128,7 +150,7 @@ window.addEventListener('scroll', () => {
 const modal = document.querySelector('.image-modal');
 const modalImage = modal.querySelector('img');
 const openPreview = (image) => {
-  modalImage.src = image.currentSrc || image.src;
+  modalImage.src = image.dataset.fullsrc || image.currentSrc || image.src;
   modalImage.alt = image.alt;
   if (!modal.open) modal.showModal();
 };
@@ -158,6 +180,7 @@ const updateAboutOnScroll = () => {
   if (!aboutText || !aboutAside) return;
   const textRect = aboutText.getBoundingClientRect();
   const guyRect = aboutAside.getBoundingClientRect();
+  if (textRect.bottom < -64 || textRect.top > window.innerHeight * 1.2) return;
   const textProgress = clamp((window.innerHeight - textRect.top) / (window.innerHeight + textRect.height));
   const characterCount = Math.max(aboutCharacters.length - 1, 1);
   aboutCharacters.forEach((character, index) => {
@@ -178,6 +201,42 @@ window.addEventListener('scroll', scheduleAboutUpdate, { passive:true });
 window.addEventListener('resize', scheduleAboutUpdate, { passive:true });
 scheduleAboutUpdate();
 
+const headingEntrances = document.querySelectorAll(
+  '.section-heading h2, .services h3, .find-me h3, .credits h3'
+);
+const copyEntrances = document.querySelectorAll(
+  '.works .work-copy, .availability, .credits p'
+);
+const runEntrance = (target, className) => {
+  target.dataset.entered = 'true';
+  target.classList.add(className);
+};
+
+if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  const entranceTargets = [];
+  headingEntrances.forEach((target) => {
+    target.dataset.entrance = 'enter-heading';
+    entranceTargets.push(target);
+  });
+  copyEntrances.forEach((target) => {
+    target.dataset.entrance = 'enter-copy';
+    entranceTargets.push(target);
+  });
+  let entranceFrame = null;
+  const triggerEntrances = () => {
+    entranceFrame = null;
+    entranceTargets.forEach((target) => {
+      if (target.dataset.entered) return;
+      const rect = target.getBoundingClientRect();
+      const inEntranceZone = rect.top <= window.innerHeight * .84 && rect.bottom >= 0;
+      if (inEntranceZone) runEntrance(target, target.dataset.entrance);
+    });
+  };
+  window.addEventListener('scroll', () => {
+    if (entranceFrame === null) entranceFrame = requestAnimationFrame(triggerEntrances);
+  }, { passive: true });
+}
+
 document.querySelectorAll('.logos img').forEach((logo) => {
   const resetLogo = () => {
     logo.style.setProperty('--logo-x', '0px');
@@ -185,15 +244,22 @@ document.querySelectorAll('.logos img').forEach((logo) => {
     logo.style.setProperty('--logo-r', '0deg');
     logo.style.setProperty('--logo-scale', '1');
   };
+  logo.addEventListener('pointerenter', (event) => {
+    if (event.pointerType === 'touch') return;
+    logo.style.setProperty('--logo-x', '0px');
+    logo.style.setProperty('--logo-y', '-12px');
+    logo.style.setProperty('--logo-r', '0deg');
+    logo.style.setProperty('--logo-scale', '1.075');
+  });
   logo.addEventListener('pointermove', (event) => {
     if (event.pointerType === 'touch') return;
     const rect = logo.getBoundingClientRect();
     const x = (event.clientX - rect.left) / rect.width - .5;
     const y = (event.clientY - rect.top) / rect.height - .5;
-    logo.style.setProperty('--logo-x', `${(x * 10).toFixed(1)}px`);
-    logo.style.setProperty('--logo-y', `${(y * 10).toFixed(1)}px`);
-    logo.style.setProperty('--logo-r', `${(x * 3).toFixed(1)}deg`);
-    logo.style.setProperty('--logo-scale', '1.045');
+    logo.style.setProperty('--logo-x', `${(x * 9).toFixed(1)}px`);
+    logo.style.setProperty('--logo-y', `${(-12 + y * 7).toFixed(1)}px`);
+    logo.style.setProperty('--logo-r', `${(x * 2.2).toFixed(1)}deg`);
+    logo.style.setProperty('--logo-scale', '1.075');
   });
   logo.addEventListener('pointerleave', resetLogo);
 });
