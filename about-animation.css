@@ -1,0 +1,4 @@
+.about-character {
+  color: #666;
+  transition: color .08s ease-in-out;
+}

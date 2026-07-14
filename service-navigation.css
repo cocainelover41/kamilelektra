@@ -1,0 +1,62 @@
+/* The service block deliberately shares the right-hand alignment of the social links. */
+.services {
+  grid-template-columns: minmax(0, .78fr) minmax(0, 1.22fr);
+  column-gap: clamp(48px, 11vw, 190px);
+  justify-items: stretch;
+  row-gap: clamp(120px, 13vw, 205px);
+}
+
+.services-title,
+.services-detail {
+  width: max-content;
+  max-width: 100%;
+}
+
+.services-title { justify-self: start; text-align: left; }
+.services-detail { justify-self: end; text-align: right; }
+
+.services-title > span {
+  margin-bottom: 9px;
+}
+
+.services ul {
+  display: grid;
+  justify-items: end;
+}
+
+.services li::before {
+  padding-right: 10px;
+}
+
+.availability {
+  justify-self: center;
+  color: #fff;
+  font-size: 22px;
+}
+
+.site-nav {
+  transition: opacity .24s cubic-bezier(.22, 1, .36, 1), transform .28s cubic-bezier(.22, 1, .36, 1);
+}
+
+.page-ready .site-nav {
+  transition-delay: .35s;
+}
+
+@media (max-width: 700px) {
+  .services {
+    grid-template-columns: 1fr;
+    row-gap: 58px;
+  }
+
+  .services-title { justify-self: start; }
+  .services-detail { justify-self: end; }
+  .availability { font-size: 12px; }
+}
+
+@media (min-width: 701px) and (max-width: 1199px) {
+  .availability { font-size: 18px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-nav { transition: none; }
+}
