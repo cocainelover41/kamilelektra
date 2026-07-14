@@ -32,8 +32,7 @@ if (aboutParagraph) {
 const placeTrailPiece = (event) => {
   if (!heroActive || !lastPoint) return;
   const distance = Math.hypot(event.clientX - lastPoint.x, event.clientY - lastPoint.y);
-  const minimumDistance = event.pointerType === 'touch' ? 12 : 38;
-  if (distance < minimumDistance) return;
+  if (distance < 38) return;
   lastPoint = { x: event.clientX, y: event.clientY };
   const bounds = hero.getBoundingClientRect();
   const image = document.createElement('img');
@@ -50,10 +49,45 @@ const placeTrailPiece = (event) => {
   trail.append(image);
 };
 
-hero.addEventListener('pointerenter', (event) => { heroActive = true; lastPoint = { x:event.clientX, y:event.clientY }; });
-hero.addEventListener('pointerdown', (event) => { heroActive = true; lastPoint = { x:event.clientX, y:event.clientY }; });
-hero.addEventListener('pointermove', placeTrailPiece);
-hero.addEventListener('pointerleave', () => { heroActive = false; lastPoint = null; });
+hero.addEventListener('pointerenter', (event) => {
+  if (event.pointerType === 'touch') return;
+  heroActive = true;
+  lastPoint = { x:event.clientX, y:event.clientY };
+});
+hero.addEventListener('pointerdown', (event) => {
+  if (event.pointerType === 'touch') return;
+  heroActive = true;
+  lastPoint = { x:event.clientX, y:event.clientY };
+});
+hero.addEventListener('pointermove', (event) => {
+  if (event.pointerType !== 'touch') placeTrailPiece(event);
+});
+hero.addEventListener('pointerleave', (event) => {
+  if (event.pointerType === 'touch') return;
+  heroActive = false;
+  lastPoint = null;
+});
+
+let activeTouchId = null;
+const touchTrailEvent = (touch) => ({ clientX:touch.clientX, clientY:touch.clientY });
+hero.addEventListener('touchstart', (event) => {
+  const touch = event.changedTouches[0];
+  if (!touch) return;
+  activeTouchId = touch.identifier;
+  heroActive = true;
+  lastPoint = { x:touch.clientX, y:touch.clientY };
+}, { passive:true });
+hero.addEventListener('touchmove', (event) => {
+  const touch = [...event.touches].find(({ identifier }) => identifier === activeTouchId);
+  if (touch) placeTrailPiece(touchTrailEvent(touch));
+}, { passive:true });
+hero.addEventListener('touchend', (event) => {
+  if ([...event.changedTouches].some(({ identifier }) => identifier === activeTouchId)) {
+    activeTouchId = null;
+    lastPoint = null;
+  }
+}, { passive:true });
+hero.addEventListener('touchcancel', () => { activeTouchId = null; lastPoint = null; }, { passive:true });
 
 const phoneSource = document.querySelector('.phone-source');
 const phoneCanvas = document.querySelector('.contact-phone canvas');
