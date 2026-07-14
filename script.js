@@ -53,6 +53,26 @@ hero.addEventListener('pointerenter', (event) => { heroActive = true; lastPoint 
 hero.addEventListener('pointermove', placeTrailPiece);
 hero.addEventListener('pointerleave', () => { heroActive = false; lastPoint = null; });
 
+const phoneSource = document.querySelector('.phone-source');
+const phoneCanvas = document.querySelector('.contact-phone canvas');
+if (phoneSource && phoneCanvas) {
+  const phoneContext = phoneCanvas.getContext('2d');
+  const sizePhoneCanvas = () => {
+    const ratio = phoneSource.videoWidth / phoneSource.videoHeight || 1.5;
+    phoneCanvas.width = 960;
+    phoneCanvas.height = Math.round(phoneCanvas.width / ratio);
+  };
+  const drawPhoneFrame = () => {
+    if (phoneSource.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
+      phoneContext.drawImage(phoneSource, 0, 0, phoneCanvas.width, phoneCanvas.height);
+    }
+    requestAnimationFrame(drawPhoneFrame);
+  };
+  phoneSource.addEventListener('loadedmetadata', sizePhoneCanvas, { once:true });
+  phoneSource.play().catch(() => {});
+  requestAnimationFrame(drawPhoneFrame);
+}
+
 let pointerY = Number.POSITIVE_INFINITY;
 let navigationRequested = false;
 const updateNavigation = () => {

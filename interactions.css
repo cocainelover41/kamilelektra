@@ -1,7 +1,23 @@
 .contact-phone {
+  position: relative;
+  overflow: hidden;
   pointer-events: none;
   user-select: none;
   -webkit-user-select: none;
+}
+
+.contact-phone canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.phone-source {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .works .work-art {
