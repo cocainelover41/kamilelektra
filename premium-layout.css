@@ -1,0 +1,111 @@
+/* Desktop-only art direction pass: larger canvas, clearer hierarchy, steadier rhythm. */
+@media (min-width: 1200px) {
+  .works.section {
+    width: min(94vw, 1500px);
+    padding-top: clamp(205px, 40vh, 290px);
+  }
+
+  .works .section-heading,
+  .works .work-stream {
+    width: 91.5%;
+  }
+
+  .works .section-heading {
+    width: min(96vw, 1680px);
+    margin-left: calc((min(94vw, 1500px) - min(96vw, 1680px)) / 2);
+    margin-right: 0;
+    margin-bottom: 72px;
+  }
+
+  .works .section-heading h2,
+  .about .section-heading h2 {
+    font-size: 42px;
+    letter-spacing: -.05em;
+  }
+
+  .works .work-art.work-stream {
+    width: 91.5%;
+  }
+
+  .project {
+    margin-bottom: 210px;
+  }
+
+  .work-copy {
+    font-size: 24px;
+    line-height: 1.25;
+  }
+
+  /* Captions belong to the work above them, with a clearer pause before the next image. */
+  .phase-copy {
+    margin-bottom: 254px;
+  }
+
+  .disco-copy {
+    margin-top: 147px;
+    margin-bottom: 254px;
+  }
+
+  .project-other > .other-copy {
+    margin-top: 147px;
+    margin-bottom: 254px;
+  }
+
+  .project-other > .other-copy:first-child {
+    margin-top: 147px;
+    margin-bottom: 254px;
+  }
+
+  .drawing {
+    width: 83%;
+  }
+
+  .bag {
+    width: 75%;
+  }
+
+  .logo-section {
+    padding-top: 118px;
+    padding-bottom: 214px;
+  }
+
+  .about .section-heading {
+    margin-bottom: 72px;
+  }
+}
+
+/* Keep the caption rhythm intact on the intermediate desktop/tablet layout too. */
+@media (min-width: 701px) and (max-width: 1199px) {
+  .works {
+    padding-top: clamp(110px, 14vh, 165px);
+  }
+
+  .works .section-heading {
+    width: 94vw;
+    margin-left: -3vw;
+    margin-right: 0;
+    margin-bottom: 58px;
+  }
+
+  .works .section-heading h2,
+  .about .section-heading h2 {
+    font-size: 32px;
+    letter-spacing: -.05em;
+  }
+
+  .disco-copy,
+  .project-other > .other-copy,
+  .project-other > .other-copy:first-child {
+    margin-top: var(--caption-gap);
+    margin-bottom: 180px;
+  }
+}
+
+@media (max-width: 700px) {
+  .disco-copy,
+  .project-other > .other-copy,
+  .project-other > .other-copy:first-child {
+    margin-top: var(--caption-gap);
+    margin-bottom: 86px;
+  }
+}

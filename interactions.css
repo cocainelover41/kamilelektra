@@ -29,6 +29,36 @@
   outline-offset: 5px;
 }
 
+/* Image taps should open a preview, never create the browser's selection chrome. */
+.works .work-art,
+.works .work-art img,
+.works .garment,
+.works .garment img {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.works img {
+  -webkit-user-drag: none;
+}
+
+@media (hover: none), (pointer: coarse) {
+  .works .work-art:focus,
+  .works .work-art:focus-visible {
+    outline: none;
+    box-shadow: none;
+  }
+
+  .works .garment:focus,
+  .works .garment:focus-visible {
+    outline: none;
+    box-shadow: none;
+  }
+}
+
 /* A fixed navigation remains available without competing with the work on screen. */
 .site-nav.is-hidden {
   transform: translateY(-100%);
