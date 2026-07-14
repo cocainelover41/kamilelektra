@@ -1,0 +1,37 @@
+/* Share the same left edge for all of the major closing-section headings. */
+.about .section-heading {
+  width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+/* The service list begins level with OPEN TO:, not the small SERVICES label. */
+@media (min-width: 701px) {
+  .services-detail { padding-top: 28px; }
+}
+
+@media (max-width: 700px) {
+  .about {
+    padding-bottom: 88px;
+  }
+
+  .about .section-heading {
+    margin-bottom: 36px;
+  }
+
+  .about .section-heading h2 {
+    font-size: 26px;
+  }
+
+  .about-text {
+    width: 100%;
+    font-size: clamp(17px, 4.4vw, 21px);
+    line-height: 1.22;
+    letter-spacing: -.75px;
+  }
+
+  .about-aside {
+    width: min(62vw, 280px);
+    margin: 26px 0 0 auto;
+  }
+}

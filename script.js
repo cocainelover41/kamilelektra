@@ -32,7 +32,8 @@ if (aboutParagraph) {
 const placeTrailPiece = (event) => {
   if (!heroActive || !lastPoint) return;
   const distance = Math.hypot(event.clientX - lastPoint.x, event.clientY - lastPoint.y);
-  if (distance < 38) return;
+  const minimumDistance = event.pointerType === 'touch' ? 12 : 38;
+  if (distance < minimumDistance) return;
   lastPoint = { x: event.clientX, y: event.clientY };
   const bounds = hero.getBoundingClientRect();
   const image = document.createElement('img');
@@ -50,6 +51,7 @@ const placeTrailPiece = (event) => {
 };
 
 hero.addEventListener('pointerenter', (event) => { heroActive = true; lastPoint = { x:event.clientX, y:event.clientY }; });
+hero.addEventListener('pointerdown', (event) => { heroActive = true; lastPoint = { x:event.clientX, y:event.clientY }; });
 hero.addEventListener('pointermove', placeTrailPiece);
 hero.addEventListener('pointerleave', () => { heroActive = false; lastPoint = null; });
 
